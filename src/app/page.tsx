@@ -74,9 +74,10 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+      <div className="flex-1">
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center mb-8">
             <div className="flex items-center justify-center gap-2 mb-4">
@@ -194,6 +195,27 @@ export default function Home() {
           )}
         </div>
       </div>
+      </div>
+
+      {/* Footer */}
+      <footer className="mt-16 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
+        <div className="container mx-auto px-4 py-6">
+          <div className="text-center text-sm text-gray-600 dark:text-gray-400">
+            <p>
+              Powered by{' '}
+              <a
+                href="https://github.com/snailuu"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 font-medium transition-colors"
+              >
+                snailuu
+              </a>
+              {' '}• Built with Next.js & GitHub API
+            </p>
+          </div>
+        </div>
+      </footer>
 
       {/* Settings Modal */}
       <SettingsModal
