@@ -1,7 +1,7 @@
 import { GitCommit, GitBranch } from '@/lib/github';
 import { formatDistanceToNow } from 'date-fns';
 import { useState, useRef, useMemo, useCallback, memo } from 'react';
-import { ExternalLink, GitCommit as GitCommitIcon, GitMerge, Eye, EyeOff, ChevronDown, ChevronUp, MoreHorizontal } from 'lucide-react';
+import { ExternalLink, GitMerge, Eye, EyeOff, ChevronDown, ChevronUp, MoreHorizontal } from 'lucide-react';
 
 interface BranchVisualizationProps {
   commits: GitCommit[];
@@ -157,14 +157,6 @@ export default function BranchVisualization({ commits, branches, owner, repo }: 
   const [displayLimit, setDisplayLimit] = useState(100); // Limit initial display
   const containerRef = useRef<HTMLDivElement>(null);
   
-  if (!commits.length || !branches.length) {
-    return (
-      <div className="text-center py-8 text-gray-500">
-        No commits or branches found in this repository.
-      </div>
-    );
-  }
-
   // Toggle branch visibility
   const toggleBranch = useCallback((branchName: string) => {
     setVisibleBranches(prev => {
@@ -201,7 +193,6 @@ export default function BranchVisualization({ commits, branches, owner, repo }: 
     // Track branch assignments
     const branchMap = new Map<string, number>();
     const branchCommits = new Map<number, Set<string>>();
-    const branchNames = new Map<number, string>();
     let currentBranchIndex = 0;
 
     // Initialize main branch
@@ -209,7 +200,6 @@ export default function BranchVisualization({ commits, branches, owner, repo }: 
     if (mainBranch) {
       branchMap.set(mainBranch.name, 0);
       branchCommits.set(0, new Set());
-      branchNames.set(0, mainBranch.name);
       currentBranchIndex = 1;
     }
 
@@ -217,13 +207,12 @@ export default function BranchVisualization({ commits, branches, owner, repo }: 
     sortedCommits.forEach((commit, index) => {
       let branchIndex = 0;
       let branchName = mainBranch?.name || 'main';
-      let isMerge = commit.parents.length > 1;
+      const isMerge = commit.parents.length > 1;
       
       const branchHead = branches.find(b => b.commit.sha === commit.sha);
       if (branchHead && !branchMap.has(branchHead.name)) {
         branchMap.set(branchHead.name, currentBranchIndex);
         branchCommits.set(currentBranchIndex, new Set());
-        branchNames.set(currentBranchIndex, branchHead.name);
         branchIndex = currentBranchIndex;
         branchName = branchHead.name;
         currentBranchIndex++;
@@ -305,6 +294,14 @@ export default function BranchVisualization({ commits, branches, owner, repo }: 
   const hasMoreCommits = commitNodes.filter(node => 
     node.branchName && visibleBranches.has(node.branchName)
   ).length > displayLimit;
+
+  if (!commits.length || !branches.length) {
+    return (
+      <div className="text-center py-8 text-gray-500">
+        No commits or branches found in this repository.
+      </div>
+    );
+  }
 
   return (
     <div className="w-full bg-gray-900 rounded-lg relative" ref={containerRef}>
